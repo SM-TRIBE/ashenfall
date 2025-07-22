@@ -14,22 +14,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     is_new = _player_data.create_player(user.id, user.first_name)
 
     if is_new:
-        welcome_text = (
-            f"خوش آمدی، {user.first_name}، به دنیای *خاکستران: تاج شکسته*.\n\n"
-            "دوک مرده است. شهر در خونریزی است. در این عصر هرج‌ومرج، تو با هیچ‌چیز جز هوش و لباس‌های کهنه‌ات از خواب بیدار می‌شوی.\n\n"
-            "--- *دستورات اصلی* ---\n"
-            "`/نگاه` - اطراف خود را ببین.\n"
-            "`/حرکت <جهت>` - به مکانی جدید برو.\n"
-_player_data = None
-def set_data_manager(data_manager: PlayerData):
-    global _player_data
-    _player_data = data_manager
-
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
-    is_new = _player_data.create_player(user.id, user.first_name)
-
-    if is_new:
+        # CORRECTED: Added the closing parenthesis at the end of this block
         welcome_text = (
             f"خوش آمدی، {user.first_name}، به دنیای *خاکستران: تاج شکسته*.\n\n"
             "دوک مرده است. شهر در خونریزی است. در این عصر هرج‌ومرج، تو با هیچ‌چیز جز هوش و لباس‌های کهنه‌ات از خواب بیدار می‌شوی.\n\n"
@@ -40,7 +25,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             "`/دارایی` - محتویات کوله‌پشتی خود را ببین.\n"
             "--------------------------\n\n"
             "سفر تو اکنون آغاز می‌شود."
-        )
+        ) # <--- THIS WAS THE MISSING PARENTHESIS
         await update.message.reply_text(welcome_text, parse_mode='Markdown')
         await look_command(update, context)
     else:
@@ -93,7 +78,10 @@ async def move_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         players_in_room = _player_data.get_players_in_room(player['location'])
         for pid in players_in_room:
             if str(pid) != str(user_id):
-                await context.bot.send_message(chat_id=pid, text=f"_{player['username']} به سمت {direction} می‌رود._", parse_mode='Markdown')
+                try:
+                    await context.bot.send_message(chat_id=pid, text=f"_{player['username']} به سمت {direction} می‌رود._", parse_mode='Markdown')
+                except Exception:
+                    pass # Ignore if user has blocked the bot
 
         new_location_id = current_location['exits'][direction]
         player['location'] = new_location_id
@@ -103,7 +91,10 @@ async def move_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         new_players_in_room = _player_data.get_players_in_room(new_location_id)
         for pid in new_players_in_room:
             if str(pid) != str(user_id):
-                 await context.bot.send_message(chat_id=pid, text=f"_{player['username']} از راه می‌رسد._", parse_mode='Markdown')
+                try:
+                    await context.bot.send_message(chat_id=pid, text=f"_{player['username']} از راه می‌رسد._", parse_mode='Markdown')
+                except Exception:
+                    pass
 
         await look_command(update, context)
     else:
