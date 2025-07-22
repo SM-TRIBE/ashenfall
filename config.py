@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Your Telegram Bot Token from BotFather
-BOT_TOKEN = os.getenv("7786508141:AAETbqJgSE7DI8QuCs7KT5GYx9ZqtI54W2c")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Your numeric Telegram User ID
 # The default value 0 is a safeguard in case the variable is not set
-ADMIN_ID = int(os.getenv("6246979600", 0))
+ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
 
 # The URL for the webhook, provided by the deployment platform (like Render)
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
